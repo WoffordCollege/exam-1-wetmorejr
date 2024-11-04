@@ -1,5 +1,6 @@
 package edu.wofford;
 
+import java.util.HashMap;
 
 /**
  * This class provides implements a game board for Connect Four.
@@ -114,7 +115,17 @@ public class ConnectFour {
     public Location getTopOfColumn(int column) {
         // Question 1
         // TODO
-        
+        for (int i = 0; i < board.length; i++ ) {
+            for (int j = 0; j < board[i].length; j++) {
+                if (j == column) {
+                    if (board[i][j] == Location.EMPTY) {
+                        continue;
+                    } else {
+                        return board[i][j];
+                    }
+                }
+            }
+        }
         return Location.EMPTY;
     }
     
@@ -129,7 +140,17 @@ public class ConnectFour {
     public int getHeightOfColumn(int column) {
         // Question 2
         // TODO
-        
+        for (int i = 0; i < board.length; i++ ) {
+            for (int j = 0; j < board[i].length; j++) {
+                if (j == column) {
+                    if (board[i][j] == Location.EMPTY) {
+                        continue;
+                    } else {
+                        return (i - 6) * -1;
+                    }
+                }
+            }
+        }
         return 0;
     }
     
@@ -146,7 +167,23 @@ public class ConnectFour {
     public void dropToken(int column) {
         // Question 3
         // TODO
-        
+        if (getHeightOfColumn(column) == 6) {
+            throw new ColumnFullException();
+        }
+        for (int i = 0; i < board.length; i++ ) {
+            for (int j = 0; j < board[i].length; j++) {
+                if (j == column) {
+                    if (redTurn) {
+                        setLocation(getHeightOfColumn(column), j, Location.RED);
+                        redTurn = false;
+                    } else {
+                        setLocation(getHeightOfColumn(column), j, Location.BLACK);
+                        redTurn = true;
+                    }
+                }
+            }
+        }
+
     }
     
     /**
@@ -170,7 +207,29 @@ public class ConnectFour {
         //       along a column.
         
         // TODO
-        
+        for (int col = 0; col < board[0].length; col++) {
+            int redCount = 0;
+            int blackCount = 0;
+            for (int row = 0; row < board.length; row++) {
+                Location location = getLocation(row, col);
+                if (location == Location.RED) {
+                    redCount++;
+                    blackCount = 0;
+                } else if (location == Location.BLACK) {
+                    blackCount++;
+                    redCount = 0; 
+                } else {
+                    redCount = 0;
+                    blackCount = 0;
+                }
+    
+                if (redCount == 4) {
+                    return Result.REDWIN;
+                } else if (blackCount == 4) {
+                    return Result.BLACKWIN;
+                }
+            }
+        }
         return Result.NONE;
     }
     
@@ -193,8 +252,23 @@ public class ConnectFour {
     public String toString() {
         // Question 5
         // TODO
-        
-        return "";
+        String boardString = "";
+        for (int row = 0; row < board.length; row++) {
+            for (int col = 0; col < board[row].length; col++) {
+                boardString += "|";
+                if (getLocation(row, col) == Location.BLACK) {
+                    boardString += "B";
+                } else if (getLocation(row, col) == Location.RED) {
+                    boardString += "R";
+                } else {
+                    boardString += " ";
+                }
+            }
+            boardString += "|\n";
+        }
+        boardString += "---------------\n";
+        System.out.println(boardString);
+        return boardString;
     }
 
 
